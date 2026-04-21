@@ -1,0 +1,68 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { formatDate, getCategoryUrl, getPostSlug, getSortedPosts, getTagUrl } from '../../lib/blog';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('posts', ({ data }) => !data.draft);
+
+  return posts.map((post) => ({
+    params: { slug: getPostSlug(post) },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const allPosts = getSortedPosts(await getCollection('posts', ({ data }) => !data.draft));
+const relatedPosts = allPosts
+  .filter((item) => item.id !== post.id && item.data.category === post.data.category)
+  .slice(0, 3);
+const { Content } = await render(post);
+---
+
+<BaseLayout
+  title={`${post.data.title} | HiHarmonyOS`}
+  description={post.data.description}
+  path={`/blog/${getPostSlug(post)}/`}
+>
+  <article class="post-article">
+    <header class="post-hero">
+      <p class="eyebrow"><a href={getCategoryUrl(post.data.category)}>{post.data.category}</a></p>
+      <h1>{post.data.title}</h1>
+      <p class="post-hero__lead">{post.data.description}</p>
+      <div class="post-hero__meta">
+        <time datetime={post.data.date.toISOString()}>{formatDate(post.data.date)}</time>
+        <div class="tag-cloud tag-cloud--compact">
+          {post.data.tags.map((tag) => <a href={getTagUrl(tag)}>#{tag}</a>)}
+        </div>
+      </div>
+    </header>
+
+    <div class="prose">
+      <Content />
+    </div>
+  </article>
+
+  {relatedPosts.length > 0 && (
+    <section>
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Related</p>
+          <h2>同类文章</h2>
+        </div>
+      </div>
+      <div class="card-grid">
+        {relatedPosts.map((item) => (
+          <article class="post-card">
+            <div class="post-card__meta">
+              <span>{item.data.category}</span>
+              <time datetime={item.data.date.toISOString()}>{formatDate(item.data.date)}</time>
+            </div>
+            <h3><a href={`/blog/${getPostSlug(item)}/`}>{item.data.title}</a></h3>
+            <p>{item.data.description}</p>
+          </article>
+        ))}
+      </div>
+    </section>
+  )}
+</BaseLayout>

@@ -1,0 +1,40 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostCard from '../../components/PostCard.astro';
+import { getAllCategories, getAllTags, getCategoryUrl, getSortedPosts, getTagUrl } from '../../lib/blog';
+
+const posts = getSortedPosts(await getCollection('posts', ({ data }) => !data.draft));
+const categories = getAllCategories(posts);
+const tags = getAllTags(posts);
+---
+
+<BaseLayout
+  title="博客 | HiHarmonyOS"
+  description="浏览 HiHarmonyOS 的鸿蒙技术文章，涵盖 ArkTS、架构设计、性能优化与上架实践。"
+  path="/blog/"
+>
+  <section class="page-intro">
+    <p class="eyebrow">Blog Archive</p>
+    <h1>技术博客</h1>
+    <p>按文章形式持续沉淀 HarmonyOS 开发实践，适合做为 GitHub 仓库和 Vercel 线上博客的长期内容站。</p>
+  </section>
+
+  <div class="blog-layout">
+    <div class="card-grid">
+      {posts.map((post) => <PostCard post={post} />)}
+    </div>
+    <aside class="sidebar-card">
+      <h2>栏目说明</h2>
+      <p>这个站点偏向开发者视角，文章强调可复用的工程经验，而不是纯资讯搬运。</p>
+      <h3>分类</h3>
+      <div class="tag-cloud tag-cloud--compact">
+        {categories.map((category) => <a href={getCategoryUrl(category)}>{category}</a>)}
+      </div>
+      <h3>标签</h3>
+      <div class="tag-cloud tag-cloud--compact">
+        {tags.map((tag) => <a href={getTagUrl(tag)}>#{tag}</a>)}
+      </div>
+    </aside>
+  </div>
+</BaseLayout>

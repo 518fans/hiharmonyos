@@ -1,0 +1,82 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { formatDate, getCategoryUrl, getPostSlug, getSortedPosts } from '../../lib/blog';
+
+const posts = getSortedPosts(await getCollection('posts', ({ data }) => !data.draft));
+
+const archiveGroups = Array.from(
+  posts.reduce((map, post) => {
+    const year = String(post.data.date.getFullYear());
+    const month = `${post.data.date.getMonth() + 1}`.padStart(2, '0');
+    const key = `${year}-${month}`;
+
+    let group = map.get(key);
+
+    if (!group) {
+      group = {
+        key,
+        year,
+        month,
+        posts: [],
+      };
+      map.set(key, group);
+    }
+
+    group.posts.push(post);
+    return map;
+  }, new Map<string, { key: string; year: string; month: string; posts: typeof posts }>())
+).map(([, group]) => group);
+---
+
+<BaseLayout
+  title="归档 | HiHarmonyOS"
+  description="按年月归档浏览 HiHarmonyOS 的鸿蒙技术文章，快速查看内容更新节奏。"
+  path="/blog/archive/"
+>
+  <section class="page-intro page-intro--magazine">
+    <div>
+      <p class="eyebrow">Archive</p>
+      <h1>中文归档页</h1>
+      <p>按年月梳理文章，适合快速回看内容更新节奏，也方便做成长期技术栏目索引。</p>
+    </div>
+  </section>
+
+  <section class="archive-layout">
+    {archiveGroups.map((group) => (
+      <article class="archive-card">
+        <div class="archive-card__head">
+          <p class="eyebrow">Archive</p>
+          <h2>{group.year} 年 {group.month} 月</h2>
+          <p>{group.posts.length} 篇文章</p>
+        </div>
+        <div class="archive-list">
+          {group.posts.map((post) => (
+            <a class="archive-item" href={`/blog/${getPostSlug(post)}/`}>
+              <div>
+                <h3>{post.data.title}</h3>
+                <p>{post.data.description}</p>
+              </div>
+              <div class="archive-item__meta">
+                <span>{formatDate(post.data.date)}</span>
+                <span>{post.data.category}</span>
+              </div>
+            </a>
+          ))}
+        </div>
+      </article>
+    ))}
+  </section>
+
+  <section class="section-heading section-heading--rule">
+    <div>
+      <p class="eyebrow">Directory</p>
+      <h2>栏目入口</h2>
+    </div>
+  </section>
+  <div class="tag-cloud">
+    {[...new Set(posts.map((post) => post.data.category))].map((category) => (
+      <a href={getCategoryUrl(category)}>{category}</a>
+    ))}
+  </div>
+</BaseLayout>

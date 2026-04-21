@@ -1,0 +1,30 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="关于 | HiHarmonyOS"
+  description="HiHarmonyOS 是面向鸿蒙开发者的技术博客，部署在 Vercel，适合作为 GitHub 开源内容站。"
+  path="/about/"
+>
+  <section class="page-intro">
+    <p class="eyebrow">About</p>
+    <h1>关于这个站点</h1>
+    <p>HiHarmonyOS 定位为鸿蒙技术博客，适合个人品牌、技术输出、产品展示和搜索引擎长期收录。</p>
+  </section>
+
+  <section class="topic-grid">
+    <article class="topic-card">
+      <h2>站点方向</h2>
+      <p>以 HarmonyOS 为核心，覆盖 ArkTS、组件化、性能、调试、上架和工程实践。</p>
+    </article>
+    <article class="topic-card">
+      <h2>技术栈</h2>
+      <p>Astro 静态站点生成，适合托管到 GitHub，使用 Vercel 自动构建与发布。</p>
+    </article>
+    <article class="topic-card">
+      <h2>域名规划</h2>
+      <p>www.hiharmonyos.com 可直接绑定到 Vercel，后续只需完成域名解析。</p>
+    </article>
+  </section>
+</BaseLayout>

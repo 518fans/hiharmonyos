@@ -1,0 +1,56 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import PostCard from '../../../components/PostCard.astro';
+import {
+  findCategoryBySlug,
+  getAllCategories,
+  getCategorySlug,
+  getCategoryUrl,
+  getSortedPosts,
+} from '../../../lib/blog';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('posts', ({ data }) => !data.draft);
+  const categories = getAllCategories(posts);
+
+  return categories.map((category) => ({
+    params: { category: getCategorySlug(category) },
+    props: { category },
+  }));
+}
+
+const { category } = Astro.props;
+const posts = getSortedPosts(await getCollection('posts', ({ data }) => !data.draft));
+const currentCategory = findCategoryBySlug(posts, getCategorySlug(category)) ?? category;
+const filteredPosts = posts.filter((post) => post.data.category === currentCategory);
+const otherCategories = getAllCategories(posts).filter((item) => item !== currentCategory);
+---
+
+<BaseLayout
+  title={`${currentCategory} | 分类页 | HiHarmonyOS`}
+  description={`查看 ${currentCategory} 分类下的鸿蒙技术文章与工程实践。`}
+  path={getCategoryUrl(currentCategory)}
+>
+  <section class="page-intro">
+    <div>
+      <p class="eyebrow">Category</p>
+      <h1>{currentCategory}</h1>
+      <p>当前分类共 {filteredPosts.length} 篇文章，内容持续围绕同一技术方向沉淀。</p>
+    </div>
+  </section>
+
+  <div class="blog-layout">
+    <div class="card-grid">
+      {filteredPosts.map((post) => <PostCard post={post} />)}
+    </div>
+    <aside class="sidebar-card">
+      <h2>其他分类</h2>
+      <div class="tag-cloud tag-cloud--compact">
+        {otherCategories.map((item) => (
+          <a href={getCategoryUrl(item)}>{item}</a>
+        ))}
+      </div>
+    </aside>
+  </div>
+</BaseLayout>

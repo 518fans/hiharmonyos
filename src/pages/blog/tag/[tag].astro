@@ -1,0 +1,50 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import PostCard from '../../../components/PostCard.astro';
+import { findTagBySlug, getAllTags, getSortedPosts, getTagSlug, getTagUrl } from '../../../lib/blog';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('posts', ({ data }) => !data.draft);
+  const tags = getAllTags(posts);
+
+  return tags.map((tag) => ({
+    params: { tag: getTagSlug(tag) },
+    props: { tag },
+  }));
+}
+
+const { tag } = Astro.props;
+const posts = getSortedPosts(await getCollection('posts', ({ data }) => !data.draft));
+const currentTag = findTagBySlug(posts, getTagSlug(tag)) ?? tag;
+const filteredPosts = posts.filter((post) => post.data.tags.includes(currentTag));
+const otherTags = getAllTags(posts).filter((item) => item !== currentTag);
+---
+
+<BaseLayout
+  title={`#${currentTag} | 标签页 | HiHarmonyOS`}
+  description={`查看 #${currentTag} 标签下的鸿蒙技术文章与工程实践。`}
+  path={getTagUrl(currentTag)}
+>
+  <section class="page-intro">
+    <div>
+      <p class="eyebrow">Tag</p>
+      <h1>#{currentTag}</h1>
+      <p>当前标签共 {filteredPosts.length} 篇文章，适合按技术关键词快速浏览。</p>
+    </div>
+  </section>
+
+  <div class="blog-layout">
+    <div class="card-grid">
+      {filteredPosts.map((post) => <PostCard post={post} />)}
+    </div>
+    <aside class="sidebar-card">
+      <h2>其他标签</h2>
+      <div class="tag-cloud tag-cloud--compact">
+        {otherTags.map((item) => (
+          <a href={getTagUrl(item)}>#{item}</a>
+        ))}
+      </div>
+    </aside>
+  </div>
+</BaseLayout>

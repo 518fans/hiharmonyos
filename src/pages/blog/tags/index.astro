@@ -1,0 +1,36 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { getAllTags, getSortedPosts, getTagUrl } from '../../../lib/blog';
+
+const posts = getSortedPosts(await getCollection('posts', ({ data }) => !data.draft));
+const tags = getAllTags(posts);
+---
+
+<BaseLayout
+  title="标签 | HiHarmonyOS"
+  description="浏览 HiHarmonyOS 的标签页，按 ArkTS、性能、SEO、发布等主题快速定位文章。"
+  path="/blog/tags/"
+>
+  <section class="page-intro">
+    <div>
+      <p class="eyebrow">Tags</p>
+      <h1>标签页</h1>
+      <p>标签更细粒度，适合快速查找 ArkTS、性能优化、SEO、发布等具体话题。</p>
+    </div>
+  </section>
+
+  <section class="taxonomy-grid">
+    {tags.map((tag) => {
+      const count = posts.filter((post) => post.data.tags.includes(tag)).length;
+
+      return (
+        <a class="taxonomy-card" href={getTagUrl(tag)}>
+          <p class="eyebrow">标签</p>
+          <h2>#{tag}</h2>
+          <p>{count} 篇文章</p>
+        </a>
+      );
+    })}
+  </section>
+</BaseLayout>

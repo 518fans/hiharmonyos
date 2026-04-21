@@ -1,0 +1,75 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { getAllCategories, getCategoryUrl, getSortedPosts } from '../../../lib/blog';
+
+const hobbyCategories = ['Facebook', 'Twitter', 'Tiktok'];
+const posts = getSortedPosts(await getCollection('posts', ({ data }) => !data.draft));
+const categories = getAllCategories(posts);
+const techCategories = categories.filter((category) => !hobbyCategories.includes(category));
+const personalCategories = categories.filter((category) => hobbyCategories.includes(category));
+---
+
+<BaseLayout
+  title="分类 | HiHarmonyOS"
+  description="浏览 HiHarmonyOS 的中文分类页，按主题查看鸿蒙开发相关技术文章。"
+  path="/blog/categories/"
+>
+  <section class="page-intro">
+    <div>
+      <p class="eyebrow">Categories</p>
+      <h1>分类页</h1>
+      <p>按主题查看文章，方便围绕 HarmonyOS、性能、建站和发布流程持续阅读。</p>
+    </div>
+  </section>
+
+  <section class="section-heading section-heading--rule">
+    <div>
+      <p class="eyebrow">Categories</p>
+      <h2>技术分类</h2>
+    </div>
+  </section>
+
+  <section class="taxonomy-grid">
+    {techCategories.map((category) => {
+      const count = posts.filter((post) => post.data.category === category).length;
+
+      return (
+        <a class="taxonomy-card" href={getCategoryUrl(category)}>
+          <p class="eyebrow">分类</p>
+          <h2>{category}</h2>
+          <p>{count} 篇文章</p>
+        </a>
+      );
+    })}
+  </section>
+
+  {personalCategories.length > 0 && (
+    <>
+      <section class="section-heading section-heading--rule">
+        <div>
+          <p class="eyebrow">Interests</p>
+          <h2>个人兴趣</h2>
+        </div>
+      </section>
+      <section class="interest-grid">
+        {personalCategories.map((category) => {
+          const count = posts.filter((post) => post.data.category === category).length;
+          const latestPost = posts.find((post) => post.data.category === category);
+
+          return (
+            <a class="interest-card" href={getCategoryUrl(category)}>
+              <p class="eyebrow">Personal</p>
+              <h2>{category}</h2>
+              <p>{latestPost?.data.description ?? `${count} 篇内容`}</p>
+              <div class="interest-card__meta">
+                <span>{count} 篇文章</span>
+                <span>个人爱好</span>
+              </div>
+            </a>
+          );
+        })}
+      </section>
+    </>
+  )}
+</BaseLayout>

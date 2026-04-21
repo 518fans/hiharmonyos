@@ -1,0 +1,135 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PostCard from '../components/PostCard.astro';
+import { getAllCategories, getAllTags, getCategoryUrl, getFeaturedPosts, getSortedPosts, getTagUrl } from '../lib/blog';
+
+const hobbyCategories = ['Facebook', 'Twitter', 'Tiktok'];
+const posts = getSortedPosts(await getCollection('posts', ({ data }) => !data.draft));
+const featuredPosts = getFeaturedPosts(posts, 3);
+const categories = getAllCategories(posts);
+const techCategories = categories.filter((category) => !hobbyCategories.includes(category));
+const personalCategories = categories.filter((category) => hobbyCategories.includes(category));
+const tags = getAllTags(posts).slice(0, 8);
+---
+
+<BaseLayout
+  title="HiHarmonyOS | 鸿蒙技术博客"
+  description="面向 HarmonyOS 开发者与 IT 极客的 Astro 技术博客，聚焦 ArkTS、性能优化、跨端工程化与应用发布。"
+  path="/"
+>
+  <section class="hero">
+    <div class="hero__content">
+      <p class="eyebrow">HarmonyOS Tech Blog</p>
+      <h1>鸿蒙技术博客，给工程师看的极客内容站</h1>
+      <p class="hero__lead">
+        这里记录 HarmonyOS NEXT、ArkTS、UI 架构、性能调优与工程实践，适合开发者持续积累与对外展示。
+      </p>
+      <div class="hero__actions">
+        <a class="button button--primary" href="/blog/">进入博客</a>
+        <a class="button button--ghost" href="/blog/archive/">浏览归档</a>
+        <a class="button button--ghost" href="/about/">了解站点</a>
+      </div>
+    </div>
+    <div class="hero__panel">
+      <strong>www.hiharmonyos.com</strong>
+      <ul class="hero__stats">
+        <li><span>{posts.length}</span> 篇示例文章</li>
+        <li><span>{tags.length}</span> 个技术标签</li>
+        <li><span>Astro</span> + Vercel 静态部署</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section-heading section-heading--rule">
+    <div>
+      <p class="eyebrow">Categories</p>
+      <h2>技术分类</h2>
+    </div>
+    <a href="/blog/categories/">进入分类页</a>
+  </section>
+  <section class="category-nav-grid">
+    {techCategories.map((category) => {
+      const count = posts.filter((post) => post.data.category === category).length;
+
+      return (
+        <a class="category-nav-card" href={getCategoryUrl(category)}>
+          <p class="eyebrow">栏目</p>
+          <h3>{category}</h3>
+          <p>{count} 篇文章</p>
+        </a>
+      );
+    })}
+  </section>
+
+  {personalCategories.length > 0 && (
+    <>
+      <section class="section-heading section-heading--rule">
+        <div>
+          <p class="eyebrow">Interests</p>
+          <h2>个人兴趣</h2>
+        </div>
+      </section>
+      <section class="interest-grid">
+        {personalCategories.map((category) => {
+          const count = posts.filter((post) => post.data.category === category).length;
+          const latestPost = posts.find((post) => post.data.category === category);
+
+          return (
+            <a class="interest-card" href={getCategoryUrl(category)}>
+              <p class="eyebrow">Personal</p>
+              <h3>{category}</h3>
+              <p>{latestPost?.data.description ?? `${count} 篇内容`}</p>
+              <div class="interest-card__meta">
+                <span>{count} 篇文章</span>
+                <span>个人爱好</span>
+              </div>
+            </a>
+          );
+        })}
+      </section>
+    </>
+  )}
+
+  <section class="section-heading section-heading--rule">
+    <div>
+      <p class="eyebrow">Featured</p>
+      <h2>精选文章</h2>
+    </div>
+    <a href="/blog/">查看全部</a>
+  </section>
+  <section class="card-grid">
+    {featuredPosts.map((post) => <PostCard post={post} />)}
+  </section>
+
+  <section class="section-heading section-heading--rule">
+    <div>
+      <p class="eyebrow">Topics</p>
+      <h2>关注方向</h2>
+    </div>
+  </section>
+  <section class="topic-grid">
+    <article class="topic-card">
+      <h3>HarmonyOS NEXT</h3>
+      <p>聚焦 Stage 模型、应用生命周期、分布式能力与上架准备。</p>
+    </article>
+    <article class="topic-card">
+      <h3>ArkTS 工程化</h3>
+      <p>整理组件设计、状态管理、目录拆分与多人协作的落地方案。</p>
+    </article>
+    <article class="topic-card">
+      <h3>性能与体验</h3>
+      <p>关注首屏速度、动画流畅度、列表渲染与端侧资源管理。</p>
+    </article>
+  </section>
+
+  <section class="section-heading section-heading--rule">
+    <div>
+      <p class="eyebrow">Tags</p>
+      <h2>热门标签</h2>
+    </div>
+  </section>
+  <div class="tag-cloud">
+    {tags.map((tag) => <a href={getTagUrl(tag)}>#{tag}</a>)}
+  </div>
+</BaseLayout>
