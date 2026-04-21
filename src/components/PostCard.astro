@@ -1,6 +1,6 @@
 ---
 import type { CollectionEntry } from 'astro:content';
-import { formatDate, getCategoryUrl, getPostSlug, getTagUrl } from '../lib/blog';
+import { formatDate, getCategoryUrl, getPostUrl, getTagUrl } from '../lib/blog';
 
 interface Props {
   post: CollectionEntry<'posts'>;
@@ -14,7 +14,7 @@ const { post } = Astro.props;
     <a href={getCategoryUrl(post.data.category)}>{post.data.category}</a>
     <time datetime={post.data.date.toISOString()}>{formatDate(post.data.date)}</time>
   </div>
-  <h3><a href={`/blog/${getPostSlug(post)}/`}>{post.data.title}</a></h3>
+  <h3><a href={getPostUrl(post)}>{post.data.title}</a></h3>
   <p>{post.data.description}</p>
   <div class="post-card__tags">
     {post.data.tags.map((tag) => <a href={getTagUrl(tag)}>#{tag}</a>)}

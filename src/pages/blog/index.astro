@@ -2,7 +2,13 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PostCard from '../../components/PostCard.astro';
-import { getAllCategories, getAllTags, getCategoryUrl, getSortedPosts, getTagUrl } from '../../lib/blog';
+import {
+  getAllCategories,
+  getAllTags,
+  getCategoryUrl,
+  getSortedPosts,
+  getTagUrl,
+} from '../../lib/blog';
 
 const posts = getSortedPosts(await getCollection('posts', ({ data }) => !data.draft));
 const categories = getAllCategories(posts);
@@ -12,7 +18,7 @@ const tags = getAllTags(posts);
 <BaseLayout
   title="博客 | HiHarmonyOS"
   description="浏览 HiHarmonyOS 的鸿蒙技术文章，涵盖 ArkTS、架构设计、性能优化与上架实践。"
-  path="/blog/"
+  path="/blog.html"
 >
   <section class="page-intro">
     <p class="eyebrow">Blog Archive</p>

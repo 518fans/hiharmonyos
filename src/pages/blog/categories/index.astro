@@ -1,7 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
-import { getAllCategories, getCategoryUrl, getSortedPosts } from '../../../lib/blog';
+import { getAllCategories, getCategoriesPageUrl, getCategoryUrl, getSortedPosts } from '../../../lib/blog';
 
 const hobbyCategories = ['Facebook', 'Twitter', 'Tiktok'];
 const posts = getSortedPosts(await getCollection('posts', ({ data }) => !data.draft));
@@ -13,7 +13,7 @@ const personalCategories = categories.filter((category) => hobbyCategories.inclu
 <BaseLayout
   title="分类 | HiHarmonyOS"
   description="浏览 HiHarmonyOS 的中文分类页，按主题查看鸿蒙开发相关技术文章。"
-  path="/blog/categories/"
+  path={getCategoriesPageUrl()}
 >
   <section class="page-intro">
     <div>

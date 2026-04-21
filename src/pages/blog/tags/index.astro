@@ -1,7 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
-import { getAllTags, getSortedPosts, getTagUrl } from '../../../lib/blog';
+import { getAllTags, getSortedPosts, getTagsPageUrl, getTagUrl } from '../../../lib/blog';
 
 const posts = getSortedPosts(await getCollection('posts', ({ data }) => !data.draft));
 const tags = getAllTags(posts);
@@ -10,7 +10,7 @@ const tags = getAllTags(posts);
 <BaseLayout
   title="标签 | HiHarmonyOS"
   description="浏览 HiHarmonyOS 的标签页，按 ArkTS、性能、SEO、发布等主题快速定位文章。"
-  path="/blog/tags/"
+  path={getTagsPageUrl()}
 >
   <section class="page-intro">
     <div>

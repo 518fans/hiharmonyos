@@ -1,7 +1,7 @@
 ---
 import { getCollection, render } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { formatDate, getCategoryUrl, getPostSlug, getSortedPosts, getTagUrl } from '../../lib/blog';
+import { formatDate, getCategoryUrl, getPostSlug, getPostUrl, getSortedPosts, getTagUrl } from '../../lib/blog';
 
 export async function getStaticPaths() {
   const posts = await getCollection('posts', ({ data }) => !data.draft);
@@ -23,7 +23,7 @@ const { Content } = await render(post);
 <BaseLayout
   title={`${post.data.title} | HiHarmonyOS`}
   description={post.data.description}
-  path={`/blog/${getPostSlug(post)}/`}
+  path={getPostUrl(post)}
 >
   <article class="post-article">
     <header class="post-hero">
@@ -58,7 +58,7 @@ const { Content } = await render(post);
               <span>{item.data.category}</span>
               <time datetime={item.data.date.toISOString()}>{formatDate(item.data.date)}</time>
             </div>
-            <h3><a href={`/blog/${getPostSlug(item)}/`}>{item.data.title}</a></h3>
+            <h3><a href={getPostUrl(item)}>{item.data.title}</a></h3>
             <p>{item.data.description}</p>
           </article>
         ))}

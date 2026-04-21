@@ -32,6 +32,30 @@ export function getPostSlug(post: Post) {
   return post.id.replace(/\.md$/, '');
 }
 
+export function getBlogUrl() {
+  return '/blog.html';
+}
+
+export function getArchiveUrl() {
+  return '/blog/archive.html';
+}
+
+export function getCategoriesPageUrl() {
+  return '/blog/categories.html';
+}
+
+export function getTagsPageUrl() {
+  return '/blog/tags.html';
+}
+
+export function getAboutUrl() {
+  return '/about.html';
+}
+
+export function getPostUrl(post: Post) {
+  return `/blog/${getPostSlug(post)}.html`;
+}
+
 export function getCategorySlug(category: string) {
   return toSegment(category);
 }
@@ -41,11 +65,11 @@ export function getTagSlug(tag: string) {
 }
 
 export function getCategoryUrl(category: string) {
-  return `/blog/category/${getCategorySlug(category)}/`;
+  return `/blog/category/${getCategorySlug(category)}.html`;
 }
 
 export function getTagUrl(tag: string) {
-  return `/blog/tag/${getTagSlug(tag)}/`;
+  return `/blog/tag/${getTagSlug(tag)}.html`;
 }
 
 export function findCategoryBySlug(posts: Post[], slug: string) {

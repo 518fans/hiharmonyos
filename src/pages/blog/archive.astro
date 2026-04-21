@@ -1,7 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { formatDate, getCategoryUrl, getPostSlug, getSortedPosts } from '../../lib/blog';
+import { formatDate, getArchiveUrl, getCategoryUrl, getPostUrl, getSortedPosts } from '../../lib/blog';
 
 const posts = getSortedPosts(await getCollection('posts', ({ data }) => !data.draft));
 
@@ -32,7 +32,7 @@ const archiveGroups = Array.from(
 <BaseLayout
   title="归档 | HiHarmonyOS"
   description="按年月归档浏览 HiHarmonyOS 的鸿蒙技术文章，快速查看内容更新节奏。"
-  path="/blog/archive/"
+  path={getArchiveUrl()}
 >
   <section class="page-intro page-intro--magazine">
     <div>
@@ -52,7 +52,7 @@ const archiveGroups = Array.from(
         </div>
         <div class="archive-list">
           {group.posts.map((post) => (
-            <a class="archive-item" href={`/blog/${getPostSlug(post)}/`}>
+            <a class="archive-item" href={getPostUrl(post)}>
               <div>
                 <h3>{post.data.title}</h3>
                 <p>{post.data.description}</p>

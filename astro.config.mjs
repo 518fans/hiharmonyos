@@ -4,6 +4,6 @@ export default defineConfig({
   site: 'https://www.hiharmonyos.com',
   output: 'static',
   build: {
-    format: 'directory',
+    format: 'file',
   },
 });
