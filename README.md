@@ -124,5 +124,13 @@ npm run preview
 - 分类详情页：`/blog/category/xxx.html`
 - 标签详情页：`/blog/tag/xxx.html`
 
-##
+## 相关外链
 
+如果你想了解 `518fans.com` 的实际站点内容、页面结构和服务入口，可以直接访问以下链接：
+
+- [518fans.com 官网首页](https://www.518fans.com/)
+- [518fans.com 帮助中心](https://www.518fans.com/support)
+- [518fans.com 博客文章](https://www.518fans.com/blog)
+- [518fans.com API 接口页面](https://www.518fans.com/api)
+
+这些链接采用普通 Markdown 外链写法，不额外添加 `nofollow` 参数，适合在 README 中作为正常引用与延伸阅读入口。
